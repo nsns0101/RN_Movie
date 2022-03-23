@@ -4,6 +4,9 @@ import * as Font from "expo-font";
 import { Text, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Asset } from "expo-asset";
+import { NavigationContainer } from "@react-navigation/native";
+import Tabs from "./navigation/Tabs.js";
+
 
 //font배열을 매개인자로 받아서 각각 로드
 // await Font.loadAsync(Ionicons.font);
@@ -25,13 +28,10 @@ export default function App(){
   const [ready, setReady] = useState(false);
   const onFinish = () => setReady(true);
   const startLoading = async() => {
-    // await new Promise( (resolve) => setTimeout(resolve, 10000) );
+    // await new Promise( (resolve) => setTimeout(resolve, 10000) ); //10초 로딩
 
     // await Font.loadAsync(Ionicons.font);  //Ionicons에 접근 가능 코드(loadFonts함수로 대체)
     const fonts = loadFonts([Ionicons.font]);
-    // console.log(fonts);
-    // console.log("----------------");
-    // console.log([Ionicons.font]);
 
     // await Asset.loadAsync(require("./dog.jpg"));  //로컬 파일 불러오기(loadAssets함수로 대체)
     // await Image.prefetch("https://reactnative.dev/img/oss_logo.png");//인터넷 파일 불러오기 문자열이라 prefetch (loadAssets함수로 대체)
@@ -39,7 +39,6 @@ export default function App(){
       require("./dog.jpg"), 
       "https://reactnative.dev/img/oss_logo.png"
       ]);
-    //  console.log(images);
     
     //모든 것에 대한 await 해주기
     await Promise.all([...fonts, ...images]);
@@ -53,5 +52,9 @@ export default function App(){
       />;
   }
 
-  return <Text>We are done loading!</Text>;
+  return (
+    <NavigationContainer>
+      <Tabs/>
+    </NavigationContainer>
+  )
 }
