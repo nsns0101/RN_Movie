@@ -6,7 +6,6 @@ import Tv from "../screens/Tv";
 import Search from "../screens/Search";
 import { BLACK_COLOR, DARK_GREY, LIGHT_GREY, YELLOW_COLOR } from "../colors";
 import { Ionicons } from "@expo/vector-icons";
-import Stack from "./Stack";
 
 const Tab = createBottomTabNavigator();
 
