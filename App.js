@@ -5,8 +5,9 @@ import { Text, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Asset } from "expo-asset";
 import { NavigationContainer } from "@react-navigation/native";
-import Tabs from "./navigation/Tabs.js";
-
+// import Tabs from "./navigation/Tabs.js";
+// import Stack from "./navigation/Stack.js";
+import Root from "./navigation/Root.js";
 
 //font배열을 매개인자로 받아서 각각 로드
 // await Font.loadAsync(Ionicons.font);
@@ -54,7 +55,9 @@ export default function App(){
 
   return (
     <NavigationContainer>
-      <Tabs/>
+      {/* <Stack/> */}
+      {/* <Tabs/> */}
+      <Root/>
     </NavigationContainer>
   )
 }
