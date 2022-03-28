@@ -21,8 +21,8 @@ Movie App
 - https://developers.themoviedb.org/3/getting-started/introdution
 - https://developers.themoviedb.org/3/movies/get-movie-details
 
-* react-native-web-swiper
-- https://github.com/reactrondev/react-native-web-swiper 
+* react-native-swiper
+- https://github.com/leecade/react-native-swiper
 
 
 

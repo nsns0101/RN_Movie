@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 //https://github.com/reactrondev/react-native-web-swiper
 import Swiper from 'react-native-swiper';
 // Dimensions - 현재 화면의 크기를 알 수 있음
-import { ActivityIndicator, Dimensions, Text, StyleSheet, ImageBackground } from "react-native";
+import { ActivityIndicator, Dimensions, Text, StyleSheet, ImageBackground, useColorScheme } from "react-native";
 import { BlurView } from "expo-blur";
 import { makeImgPath } from "../utils";
 
@@ -28,7 +28,38 @@ const BgImg = styled.Image`
   flex: 1;
 `;
 
-const Title = styled.Text``;
+const Poster = styled.Image`
+  width: 100px;
+  height: 160px;
+  border-radius: 5px;
+`
+
+const Title = styled.Text<{ isDark: boolean}>`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${(props) => (props.isDark ? "white" : props.theme.textColor)};
+`;
+
+const Wrapper = styled.View`
+  flex-direction: row;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Column = styled.View`
+  width: 40%;
+  margin-left: 10px;
+`;
+const Overview = styled.Text<{ isDark: boolean}>`
+  margin-top: 10px;
+  color: ${(props) =>
+    props.isDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)"};
+`;
+//OverView의 모든 css를 가져올 수 있음
+const Votes = styled(Overview)`
+  font-size: 12px;
+`;
 
 // 현재 화면의 높이 GET
 // == const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -37,6 +68,8 @@ const {height : SCREEN_HEIGHT} = Dimensions.get("window");
 
 //??
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {  
+  const isDark = useColorScheme() === "dark";
+  // console.log(useColorScheme());
   const [loading, setLoading] = useState(true);
   const [nowPlayingMovies, setNowPlayingMovies] = useState<any[]>([]);
 
@@ -61,12 +94,18 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   ) : (
     <Container>
       {/*  */}
-      <Swiper  
+      <Swiper
+        horizontal  
         loop 
+        autoplay
+        autoplayTimeout={3.5}
+        showsButtons={false}
+        showsPagination={false}
         containerStyle={{ width: "100%", height: SCREEN_HEIGHT / 4}}
       >
       {
         nowPlayingMovies.map( (movie) => {
+          // console.log(movie.poster_path);
           return (
             <View key={movie.id}>
               <BgImg 
@@ -75,8 +114,20 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
                 resizeMode="cover"
               />
               {/* 이미지에 블러를 주려면 이미지가 BlurView 바깥에 있어야 함 */}
-              <BlurView intensity={80} style={StyleSheet.absoluteFill}>
-                <Title>{movie.original_title}</Title>
+              <BlurView
+                tint={isDark ? "dark" : "light"}
+                intensity={60} style={StyleSheet.absoluteFill}
+              >
+                <Wrapper>
+                  <Poster source={{uri:makeImgPath(movie.poster_path) }}/>
+                  <Column>
+                    <Title isDark={isDark}>{movie.original_title}</Title>
+                    <Overview isDark={isDark}>{movie.overview.slice(0, 90)}...</Overview>
+                    {movie.vote_average > 0 ? (
+                      <Votes isDark={isDark}>⭐️{movie.vote_average}</Votes>
+                    ) : null}
+                  </Column>
+                </Wrapper>
               </BlurView>
             </View>
           )  
