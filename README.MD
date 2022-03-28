@@ -5,6 +5,11 @@ Movie App
 - android : npm run android
 
 
+
+
+* Expo
+- https://docs.expo.dev/
+
 * icons
 - https://icons.expo.fyi
 
@@ -17,7 +22,12 @@ Movie App
 - https://developers.themoviedb.org/3/movies/get-movie-details
 
 * react-native-web-swiper
-- https://github.com/reactrondev/react-native-web-swiper
+- https://github.com/reactrondev/react-native-web-swiper 
 
+
+
+
+* Mac(Additional installation)
+- npx pod-install ios
 
 

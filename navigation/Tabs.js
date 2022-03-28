@@ -12,23 +12,29 @@ const Tab = createBottomTabNavigator();
 const Tabs = () => {
     const isDark = useColorScheme();
     return (
-        <Tab.Navigator screenOptions={{
-            headerTitleAlign: "center",
-            tabBarStyle: {backgroundColor: isDark ? "black" : "white"},
-            tabBarActiveTintColor: isDark ? YELLOW_COLOR : BLACK_COLOR,
-            tabBarInactiveTintColor: isDark ? DARK_GREY : LIGHT_GREY,
-            headerStyle: {
-                backgroundColor: isDark ? BLACK_COLOR : "white",
-              },
-              headerTitleStyle: {
-                color: isDark ? "white" : BLACK_COLOR,
-              },
-              tabBarLabelStyle : {
-                  marginTop: -5,
-                  fontSize: 14,
-                  fontWeight: "400"
-              }
-        }}>
+        //tab navigator는 sceneContainerStyle과 관련된 prop를 가지고 있음
+        //sceneContainerStyle = 각 화면에 대한 스타일
+        <Tab.Navigator 
+            sceneContainerStyle={{
+                backgroundcolor: isDark ? BLACK_COLOR : "white"
+            }}
+            screenOptions={{
+                headerTitleAlign: "center",
+                tabBarStyle: {backgroundColor: isDark ? BLACK_COLOR : "white"},
+                tabBarActiveTintColor: isDark ? YELLOW_COLOR : BLACK_COLOR,
+                tabBarInactiveTintColor: isDark ? DARK_GREY : LIGHT_GREY,
+                headerStyle: {
+                    backgroundColor: isDark ? BLACK_COLOR : "white",
+                },
+                headerTitleStyle: {
+                    color: isDark ? "white" : BLACK_COLOR,
+                },
+                tabBarLabelStyle : {
+                    marginTop: -5,
+                    fontSize: 14,
+                    fontWeight: "400"
+                }
+            }}>
             <Tab.Screen name="Movies" component={Movies} options={{
                 tabBarIcon: ({focused, color, size}) => {
                     return (<Ionicons name={focused ? "film" : "film-outline"} size={size} color={color} />);
