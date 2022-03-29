@@ -112,7 +112,11 @@ def enableProguardInReleaseBuilds = false
  * give correct results when using with locales other than en-US.  Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
+
+//Date Local이 안먹히기 때문에 수정
+// 참고: https://stackoverflow.com/questions/41408025/react-native-tolocalestring-not-working-on-android
+// def jscFlavor = 'org.webkit:android-jsc:+'
+def jscFlavor = 'org.webkit:android-jsc-intl:+'
 
 /**
  * Whether to enable the Hermes VM.

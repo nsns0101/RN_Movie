@@ -29,7 +29,7 @@ color: ${(props) =>
   margin-left: 30px;
 `
 const TrendingScroll = styled.ScrollView`
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 
 const Movie = styled.View`
@@ -44,10 +44,39 @@ const Title = styled.Text<{ isDark: boolean}>`
 `;
 const Votes = styled.Text<{ isDark: boolean}>`
   font-size: 11px;
-  color: ${(props) =>
-    props.isDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)"};
+  color: ${(props) => props.isDark ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)"};
 `;
 
+const ListContainer = styled.View`
+  margin-bottom: 15px;
+`;
+
+//ListTitle css를 복사
+const CommingSoonTitle = styled(ListTitle)<{ isDark : boolean}>`
+  margin-bottom: 10px;
+`
+const HorizontalMovie = styled.View`
+  padding: 0px 30px;
+  margin-bottom: 20px;
+  flex-direction: row;
+`;
+
+const HorizontalColumn = styled.View`
+  margin-left: 15px;
+  width: 80%;
+`;
+
+const Overview = styled.Text<{ isDark : boolean}>`
+  color: ${(props) => props.isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"};
+  width: 80%;
+
+`;
+
+const Release = styled.Text<{ isDark : boolean}>`
+  color: ${(props) => props.isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"};
+  font-size: 12px;
+  margin-vertical: 5px;
+`;
 
 // 현재 화면의 높이 GET
 // == const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -90,9 +119,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
 
   const getData = async () => {
     //데이터 받기가 끝나면
-    await Promise.all([getNowPlaying(), getUpcoming(), getTrending()]);
-    //로딩 끝
-    console.log(trending);
+    await Promise.all([getTrending(), getUpcoming(), getNowPlaying()]);    //로딩 끝
     setLoading(false);
   }
 
@@ -114,7 +141,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
         autoplayTimeout={3.5}
         showsButtons={false}
         showsPagination={false}
-        containerStyle={{ marginBottom: 20, width: "100%", height: SCREEN_HEIGHT / 4}}
+        containerStyle={{ marginBottom: 10, width: "100%", height: SCREEN_HEIGHT / 4}}
       >
       {nowPlayingMovies.map((movie) => (
         <Slide 
@@ -127,24 +154,58 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
         />
       ))}
       </Swiper>
-      <ListTitle isDark={isDark}>Trending Movies</ListTitle>
-      <TrendingScroll
-        contentContainerStyle={{ paddingLeft: 30 }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
-        {trending.map(movie => (
-          <Movie key={movie.id}>
+      <ListContainer>
+        <ListTitle isDark={isDark}>Trending Movies</ListTitle>
+        {/* horizontal = {true} 영화 포스터들이 가로로  */}
+        <TrendingScroll
+          contentContainerStyle={{ paddingLeft: 30 }}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          {trending.map(movie => (
+            <Movie key={movie.id}>
+              <Poster path={movie.poster_path}/>
+              {/* 제목은 13글자만 넘으면 ... */}
+              <Title isDark={isDark}>
+                {movie.original_title.slice(0,13)}
+                {movie.original_title.length > 13 ? "..." : null}
+              </Title>
+              <Votes isDark={isDark}>
+                {movie.vote_average > 0 
+                  ? `⭐️${movie.vote_average}/10` 
+                  : `Coming Soon`
+                }
+              </Votes>
+            </Movie>
+          ))}
+        </TrendingScroll>
+      </ListContainer>
+      <CommingSoonTitle isDark={isDark}>Coming Soon</CommingSoonTitle>
+        {upcoming.map(movie => (
+          <HorizontalMovie key={movie.id}>
             <Poster path={movie.poster_path}/>
-            {/* 제목은 13글자만 넘으면 ... */}
-            <Title isDark={isDark}>
-              {movie.original_title.slice(0,13)}
-              {movie.original_title.length > 13 ? "..." : null}
-            </Title>
-            <Votes isDark={isDark}>⭐️{movie.vote_average}/10</Votes>
-          </Movie>
+            <HorizontalColumn>
+              {/* 영화 명 */}
+              <Title isDark={isDark}>{movie.original_title.slice(0,13)}</Title>
+              {/* 개봉날짜 */}
+              <Release isDark={isDark}>
+                {new Date(movie.release_date).toLocaleDateString("ko", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </Release>
+              {/* 상세 설명 */}
+              <Overview isDark={isDark}>
+                {movie.overview !== "" && movie.overview.length > 80 
+                  ? `${movie.overview.slice(0,200)}...`
+                  : movie.overview
+                }
+              </Overview>
+            </HorizontalColumn>
+          </HorizontalMovie>
         ))}
-      </TrendingScroll>
+
     </Container>
   );
 };
