@@ -5,7 +5,8 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 //https://github.com/reactrondev/react-native-web-swiper
 import Swiper from 'react-native-swiper';
 // Dimensions - 현재 화면의 크기를 알 수 있음
-import { ActivityIndicator, Dimensions, useColorScheme, RefreshControl } from "react-native";
+import { View, Text, FlatList, 
+  ActivityIndicator, Dimensions, useColorScheme, RefreshControl } from "react-native";
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
@@ -30,7 +31,7 @@ color: ${(props) =>
   font-weight: 600;
   margin-left: 30px;
 `
-const TrendingScroll = styled.ScrollView`
+const TrendingScroll = styled.FlatList`
   margin-top: 10px;
 `;
 
@@ -135,20 +136,28 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
       </Swiper>
       <ListContainer>
         <ListTitle isDark={isDark}>Trending Movies</ListTitle>
-        {/* horizontal = {true} 영화 포스터들이 가로로  */}
+        
+        {/* FlatList 필수( data={배열} renderItem = {익명함수 => 컴포넌트} ) 
+            스크롤 뷰를 안쓰는 이유는 render할때 데이터 전부를 가져오기 때문
+            
+        */}
+        
         <TrendingScroll
-          contentContainerStyle={{ paddingLeft: 30 }}
+          data={trending}
           horizontal={true}
+          keyExtractor={(item) => item.id + ""}
           showsHorizontalScrollIndicator={false}
-        >
-          {trending.map(movie => (
+          contentContainerStyle={{ paddingHorizontal: 30 }}
+          ItemSeparatorComponent={ () => <View style={{width: 30} } />}
+          // item == trending배열
+          renderItem = {({ item }) => (
             <VMedia
-              key={movie.id}
-              posterPath={movie.poster_path}
-              originalTitle={movie.original_title}
-              voteAverage={movie.vote_average}
+              posterPath={item.poster_path}
+              originalTitle={item.original_title}
+              voteAverage={item.vote_average}
             />
-          ))}
+          )}
+        >
         </TrendingScroll>
       </ListContainer>
       <CommingSoonTitle isDark={isDark}>Coming Soon</CommingSoonTitle>
