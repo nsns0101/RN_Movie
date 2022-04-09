@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 //https://github.com/reactrondev/react-native-web-swiper
 import Swiper from 'react-native-swiper';
 // Dimensions - 현재 화면의 크기를 알 수 있음
-import { ActivityIndicator, Dimensions, useColorScheme } from "react-native";
+import { ActivityIndicator, Dimensions, useColorScheme, RefreshControl } from "react-native";
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
@@ -54,10 +54,11 @@ const {height : SCREEN_HEIGHT} = Dimensions.get("window");
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {  
   const isDark = useColorScheme() === "dark";
   // console.log(useColorScheme());
+  const [refreshing, setRefreshing] = useState(false);  // 새로고침
   const [loading, setLoading] = useState(true);
   const [nowPlayingMovies, setNowPlayingMovies] = useState<any[]>([]);  // 상영중인 영화
-  const [upcoming, setUpcoming] = useState<any[]>([]);
-  const [trending, setTrending] = useState<any[]>([]);
+  const [upcoming, setUpcoming] = useState<any[]>([]);  // Comming Soon
+  const [trending, setTrending] = useState<any[]>([]);  // Trending
   
   //현재 상영중인 영화 get
   const getNowPlaying = async () => {
@@ -88,18 +89,29 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     //데이터 받기가 끝나면
     await Promise.all([getTrending(), getUpcoming(), getNowPlaying()]);    //로딩 끝
     setLoading(false);
+    // console.log("getData");
   }
 
   useEffect(()=> {
     getData();
   }, []);
 
+  const onRefresh = async () => {
+    setRefreshing(true);  // 새로고침 기호 보이게
+    await getData();
+    setRefreshing(false); // 새로고침 기호 안보이게
+  }
+
   return loading ? (
     <Loader>
       <ActivityIndicator color="black" size="small" />
     </Loader>
   ) : (
-    <Container>
+    <Container
+      refreshControl={
+        <RefreshControl onRefresh={onRefresh} refreshing={refreshing}/>
+      }
+    >
       {/*  */}
       <Swiper
         horizontal  
