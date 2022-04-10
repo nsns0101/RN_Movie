@@ -42,7 +42,7 @@ const ListContainer = styled.View`
 `;
 
 //ListTitle css를 복사
-const CommingSoonTitle = styled(ListTitle)<{ isDark : boolean}>`
+const ComingSoonTitle = styled(ListTitle)<{ isDark : boolean}>`
   margin-bottom: 10px;
 `
 
@@ -108,69 +108,70 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
       <ActivityIndicator color="black" size="small" />
     </Loader>
   ) : (
-    <Container
-      refreshControl={
-        <RefreshControl onRefresh={onRefresh} refreshing={refreshing}/>
-      }
-    >
-      {/*  */}
-      <Swiper
-        horizontal  
-        loop 
-        autoplay
-        autoplayTimeout={3.5}
-        showsButtons={false}
-        showsPagination={false}
-        containerStyle={{ marginBottom: 10, width: "100%", height: SCREEN_HEIGHT / 4}}
-      >
-      {nowPlayingMovies.map((movie) => (
-        <Slide 
-          key={movie.id}
-          backdropPath={movie.backdrop_path}
-          posterPath={movie.poster_path}
-          originalTitle={movie.original_title}
-          voteAverage={movie.vote_average}
-          overview={movie.overview}
-        />
-      ))}
-      </Swiper>
-      <ListContainer>
-        <ListTitle isDark={isDark}>Trending Movies</ListTitle>
-        
-        {/* FlatList 필수( data={배열} renderItem = {익명함수 => 컴포넌트} ) 
-            스크롤 뷰를 안쓰는 이유는 render할때 데이터 전부를 가져오기 때문
-            
-        */}
-        
-        <TrendingScroll
-          data={trending}
-          horizontal={true}
-          keyExtractor={(item) => item.id + ""}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 30 }}
-          ItemSeparatorComponent={ () => <View style={{width: 30} } />}
-          // item == trending배열
-          renderItem = {({ item }) => (
-            <VMedia
-              posterPath={item.poster_path}
-              originalTitle={item.original_title}
-              voteAverage={item.vote_average}
+    <FlatList
+      onRefresh={onRefresh}     // 새로고침 데이터 및 refreshing값 변경
+      refreshing={refreshing}   // 새로고침 true? false?
+      // 모든 항목의 맨 위에 렌더링됨(FlatList는 원래 자식 컴포넌트를 가질 수 없는데 이걸 쓰면 가능)
+      ListHeaderComponent={     
+        <>
+          <Swiper
+            horizontal
+            loop
+            autoplay
+            autoplayTimeout={3.5}
+            showsButtons={false}
+            showsPagination={false}
+            containerStyle={{
+              marginBottom: 40,
+              width: "100%",
+              height: SCREEN_HEIGHT / 4,
+            }}
+          >
+            {nowPlayingMovies.map((movie) => (
+              <Slide
+                key={movie.id}
+                backdropPath={movie.backdrop_path}
+                posterPath={movie.poster_path}
+                originalTitle={movie.original_title}
+                voteAverage={movie.vote_average}
+                overview={movie.overview}
+              />
+            ))}
+          </Swiper>
+          <ListContainer>
+            <ListTitle isDark={isDark}>Trending Movies</ListTitle>
+            <TrendingScroll
+              data={trending}
+              horizontal
+              keyExtractor={(item) => item.id + ""}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 30 }}
+              ItemSeparatorComponent={() => <View style={{ width: 30 }} />}
+              renderItem={({ item }) => (
+                <VMedia
+                  posterPath={item.poster_path}
+                  originalTitle={item.original_title}
+                  voteAverage={item.vote_average}
+                />
+              )}
             />
-          )}
-        >
-        </TrendingScroll>
-      </ListContainer>
-      <CommingSoonTitle isDark={isDark}>Coming Soon</CommingSoonTitle>
-        {upcoming.map(movie => (
-          <HMedia
-            key={movie.id}
-            posterPath={movie.poster_path}
-            originalTitle={movie.original_title}
-            overview={movie.overview}
-            releaseDate={movie.release_date}
+          </ListContainer>
+          <ComingSoonTitle isDark={isDark}>Coming soon</ComingSoonTitle>
+        </>
+      }
+      data={upcoming}
+      keyExtractor={(item) => item.id + ""}
+      ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
+      renderItem={({ item }) => (
+        <HMedia
+          posterPath={item.poster_path}
+          originalTitle={item.original_title}
+          overview={item.overview}
+          releaseDate={item.release_date}
         />
-        ))}
-    </Container>
+      )}
+
+    />
   );
 };
 export default Movies;

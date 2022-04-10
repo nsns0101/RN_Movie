@@ -12,7 +12,6 @@ const Title = styled.Text<{ isDark: boolean}>`
 `;
 const HorizontalMovie = styled.View`
   padding: 0px 30px;
-  margin-bottom: 20px;
   flex-direction: row;
 `;
 
