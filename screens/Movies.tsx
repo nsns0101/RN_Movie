@@ -3,17 +3,20 @@ import styled from "styled-components/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, FlatList, 
   ActivityIndicator, Dimensions, useColorScheme, RefreshControl } from "react-native";
-
   // swiper참고문서 
 //https://github.com/reactrondev/react-native-web-swiper
 import Swiper from 'react-native-swiper';
+import { useQuery } from 'react-query';
+import { moviesApi } from '../api';
+// 2.13강의 오류대처 timer Warining
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Setting a timer for a long period of time'])
 // Dimensions - 현재 화면의 크기를 알 수 있음
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
 
 
-const API_KEY = "b5ff37f3b8cb4ef5dc5c2bbda9d2c6e8";
 
 const Container = styled.ScrollView`
 
@@ -55,53 +58,24 @@ const {height : SCREEN_HEIGHT} = Dimensions.get("window");
 //??
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {  
   const isDark = useColorScheme() === "dark";
-  // console.log(useColorScheme());
   const [refreshing, setRefreshing] = useState(false);  // 새로고침
-  const [loading, setLoading] = useState(true);
-  const [nowPlayingMovies, setNowPlayingMovies] = useState<any[]>([]);  // 상영중인 영화
-  const [upcoming, setUpcoming] = useState<any[]>([]);  // Comming Soon
-  const [trending, setTrending] = useState<any[]>([]);  // Trending
-  
-  //현재 상영중인 영화 get
-  const getNowPlaying = async () => {
-    //실제로 필요한 데이터는 ~~.json().results
-    const { results } = await (await fetch(
-      `https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1`
-    )).json();
-    // console.log(results);
-    setLoading(false);    // 필요한 데이터를 받았으면 로딩이 끝
-    setNowPlayingMovies(results);
-  }
-  //곧 상영 예정인 영화 get
-  const getUpcoming = async () => {
-    const { results } = await (await fetch(
-      `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`
-    )).json();
-    setUpcoming(results);
-  }
-  //
-  const getTrending = async () => {
-    const { results } = await (await fetch(
-      `https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}&language=en-US&page=1`
-    )).json();
-    setTrending(results);
-  }
 
-  const getData = async () => {
-    //데이터 받기가 끝나면
-    await Promise.all([getTrending(), getUpcoming(), getNowPlaying()]);    //로딩 끝
-    setLoading(false);
-    // console.log("getData");
-  }
+  /* ReactQuery를 사용해서 fetch하면 캐싱메모리에 저장하기 때문에 다시 fetch를 하지 않음
+     즉 다시 데이터를 로드 하지 않아도 됨
+     API사용료를 내고 있다면 이득
+  */
+  const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery(
+    "nowPlaying",     //캐시에 이 이름으로 저장됨
+    moviesApi.nowPlaying  
+  );
+  const { isLoading: upcomingLoading, data: upcomingData } = useQuery("upcoming", moviesApi.upcoming);
+  const { isLoading: trendingLoading, data: trendingData } = useQuery("trending", moviesApi.trending);
+
 
   useEffect(()=> {
-    getData();
   }, []);
 
   const onRefresh = async () => {
-    setRefreshing(true);  // 새로고침 기호 보이게
-    await getData();
-    setRefreshing(false); // 새로고침 기호 안보이게
   }
 
   const renderVMedia = ({ item }) => (
@@ -129,6 +103,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   `;
 
   const MovieKeyExtractor = (item) => item.id + "";
+  const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
 
   return loading ? (
     <Loader>
@@ -154,7 +129,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
               height: SCREEN_HEIGHT / 4,
             }}
           >
-            {nowPlayingMovies.map((movie) => (
+            {nowPlayingData.results.map((movie) => (
               <Slide
                 key={movie.id}
                 backdropPath={movie.backdrop_path}
@@ -168,7 +143,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           <ListContainer>
             <ListTitle isDark={isDark}>Trending Movies</ListTitle>
             <TrendingScroll
-              data={trending}
+              data={trendingData.results}
               horizontal
               keyExtractor={MovieKeyExtractor}
               showsHorizontalScrollIndicator={false}
@@ -180,7 +155,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           <ComingSoonTitle isDark={isDark}>Coming soon</ComingSoonTitle>
         </>
       }
-      data={upcoming}
+      data={upcomingData.results}
       keyExtractor={MovieKeyExtractor}
       ItemSeparatorComponent={HSeparator}
       renderItem={renderHMedia}

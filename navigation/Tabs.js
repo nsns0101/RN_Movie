@@ -19,6 +19,11 @@ const Tabs = () => {
                 backgroundcolor: isDark ? BLACK_COLOR : "white"
             }}
             screenOptions={{
+                //unmountOnBlur : //해당 컴포넌트(화면)를 떠나면 메모리에서 컴포넌트를 삭제
+                //ReactQuery를 사용해서 fetch하면 캐싱메모리에 저장하기 때문에 다시 fetch를 하지 않음
+                //즉 다시 데이터를 로드 하지 않아도 되지만 처음부터 보여주지 않음(슬라이드 등)
+                //그래서 unmountOnBlur를 사용
+                unmountOnBlur: true,  
                 headerTitleAlign: "center",
                 tabBarStyle: {backgroundColor: isDark ? BLACK_COLOR : "white"},
                 tabBarActiveTintColor: isDark ? YELLOW_COLOR : BLACK_COLOR,
