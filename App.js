@@ -7,15 +7,14 @@ import { Asset } from "expo-asset";
 import { NavigationContainer } from "@react-navigation/native";
 // import Tabs from "./navigation/Tabs.js";
 // import Stack from "./navigation/Stack.js";
-import Root from "./navigation/Root.js";
 import { ThemeProvider } from "styled-components/native";
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import Root from "./navigation/Root.js";
 import { darkTheme, lightTheme } from "./styled";
 
-//font배열을 매개인자로 받아서 각각 로드
-// await Font.loadAsync(Ionicons.font);
-// await Font.loadAsync(Ionicons.font);
-// await Font.loadAsync(Ionicons.font);
-// 위처럼 반복되는 것을 방지
+//QueryClient Setup 1
+const queryClient = new QueryClient();
+
 const loadFonts = (fonts) => fonts.map(font => Font.loadAsync(font));
 
 const loadAssets = (images) => images.map(image =>{
@@ -59,10 +58,13 @@ export default function App(){
   }
 
   return (
-  <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-    <NavigationContainer>
-      <Root />
-    </NavigationContainer>
-  </ThemeProvider>
-  )
+    //QueryClient Setup 2
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <NavigationContainer>
+          <Root />
+        </NavigationContainer>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
 }

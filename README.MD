@@ -24,8 +24,11 @@ Movie App
 * react-native-swiper
 - https://github.com/leecade/react-native-swiper
 
+* FlatList
+- https://reactnative.dev/docs/flatlist
 
-
+* react-query
+- https://react-query.tanstack.com/overview
 
 * Mac(Additional installation)
 - npx pod-install ios
