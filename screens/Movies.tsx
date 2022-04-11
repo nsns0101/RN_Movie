@@ -7,7 +7,7 @@ import { View, Text, FlatList,
 //https://github.com/reactrondev/react-native-web-swiper
 import Swiper from 'react-native-swiper';
 import { useQuery, useQueryClient } from 'react-query';
-import { moviesApi } from '../api';
+import { MovieResponse, moviesApi } from "../api";
 // 2.13강의 오류대처 timer Warining
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Setting a timer for a long period of time'])
@@ -18,9 +18,9 @@ import VMedia from "../components/VMedia";
 
 
 
-const Container = styled.ScrollView`
+// const Container = styled.ScrollView`
 
-`;
+// `;
 
 const Loader = styled.View`
   flex: 1;
@@ -70,12 +70,12 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     data: nowPlayingData,               //데이터
     // refetch: refetchNowPlaying,  //데이터 새로 부르기
     isRefetching: isRefetchingNowPlaying  // refetch값(boolean)
-  } = useQuery(
+  } = useQuery<MovieResponse>(
     ["movies", "nowPlaying"],     //캐시에 이 key로 저장됨(query key)
     moviesApi.nowPlaying  
   );
-  const { isLoading: upcomingLoading, data: upcomingData, isRefetching: isRefetchingUpcoming } = useQuery(["movies", "upcoming"], moviesApi.upcoming);
-  const { isLoading: trendingLoading, data: trendingData, isRefetching: isRefetchingTrending } = useQuery(["movies", "trending"], moviesApi.trending);
+  const { isLoading: upcomingLoading, data: upcomingData, isRefetching: isRefetchingUpcoming } = useQuery<MovieResponse>(["movies", "upcoming"], moviesApi.upcoming);
+  const { isLoading: trendingLoading, data: trendingData, isRefetching: isRefetchingTrending } = useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
 
 
   useEffect(()=> {
@@ -86,23 +86,6 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     queryClient.refetchQueries(["movies"]);
   }
 
-  const renderVMedia = ({ item }) => (
-    <VMedia
-      posterPath={item.poster_path}
-      originalTitle={item.original_title}
-      voteAverage={item.vote_average}
-    />
-  );
-
-  const renderHMedia = ({ item }) => (
-    <HMedia
-      posterPath={item.poster_path}
-      originalTitle={item.original_title}
-      overview={item.overview}
-      releaseDate={item.release_date}
-    />
-  );
-
   const VSeparator = styled.View`
     width: 20px;
   `;
@@ -110,7 +93,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     height: 20px;
   `;
 
-  const MovieKeyExtractor = (item) => item.id + "";
+  // const MovieKeyExtractor = ;
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
   const refreshing = isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending
   console.log(refreshing);
@@ -120,7 +103,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     <Loader>
       <ActivityIndicator color="black" size="small" />
     </Loader>
-  ) : (
+  ) : upcomingData ? (
     <FlatList
       onRefresh={onRefresh}     // 새로고침 데이터 및 refreshing값 변경
       refreshing={refreshing}   // 새로고침 true? false?
@@ -140,11 +123,11 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
               height: SCREEN_HEIGHT / 4,
             }}
           >
-            {nowPlayingData.results.map((movie) => (
+            {nowPlayingData?.results.map((movie) => (
               <Slide
                 key={movie.id}
-                backdropPath={movie.backdrop_path}
-                posterPath={movie.poster_path}
+                backdropPath={movie.backdrop_path || ""}
+                posterPath={movie.poster_path || ""}
                 originalTitle={movie.original_title}
                 voteAverage={movie.vote_average}
                 overview={movie.overview}
@@ -153,25 +136,42 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           </Swiper>
           <ListContainer>
             <ListTitle isDark={isDark}>Trending Movies</ListTitle>
-            <TrendingScroll
-              data={trendingData.results}
-              horizontal
-              keyExtractor={MovieKeyExtractor}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 30 }}
-              ItemSeparatorComponent={VSeparator}
-              renderItem={renderVMedia}
-            />
+            { 
+              trendingData ? (
+                <FlatList
+                data={trendingData.results}
+                horizontal
+                keyExtractor={(item) => item.id + ""}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: 30 }}
+                ItemSeparatorComponent={VSeparator}
+                renderItem={({ item }) => (
+                  <VMedia
+                    posterPath={item.poster_path || ""}
+                    originalTitle={item.original_title}
+                    voteAverage={item.vote_average}
+                  />
+                )}
+                />
+              ) : null
+            }
           </ListContainer>
           <ComingSoonTitle isDark={isDark}>Coming soon</ComingSoonTitle>
         </>
       }
       data={upcomingData.results}
-      keyExtractor={MovieKeyExtractor}
+      keyExtractor={(item) => item.id + ""}
       ItemSeparatorComponent={HSeparator}
-      renderItem={renderHMedia}
+      renderItem={({ item }) => (
+        <HMedia
+          posterPath={item.poster_path || ""}
+          originalTitle={item.original_title}
+          overview={item.overview}
+          releaseDate={item.release_date}
+        />
+      )}
 
     />
-  );
+  ) : null;
 };
 export default Movies;
