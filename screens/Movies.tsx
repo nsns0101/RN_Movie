@@ -22,16 +22,11 @@ LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
+import Loader from "../components/Loader";
 
 // const Container = styled.ScrollView`
 
 // `;
-
-const Loader = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
 
 const ListTitle = styled.Text<{ isDark: boolean }>`
   color: ${(props) =>
@@ -39,9 +34,6 @@ const ListTitle = styled.Text<{ isDark: boolean }>`
   font-size: 18px;
   font-weight: 600;
   margin-left: 30px;
-`;
-const TrendingScroll = styled.FlatList`
-  margin-top: 10px;
 `;
 
 const ListContainer = styled.View`
@@ -108,9 +100,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   console.log(refreshing);
 
   return loading ? (
-    <Loader>
-      <ActivityIndicator color="black" size="small" />
-    </Loader>
+    <Loader />
   ) : upcomingData ? (
     <FlatList
       onRefresh={onRefresh} // 새로고침 데이터 및 refreshing값 변경
