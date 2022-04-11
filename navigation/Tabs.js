@@ -10,50 +10,81 @@ import { Ionicons } from "@expo/vector-icons";
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {
-    const isDark = useColorScheme();
-    return (
-        //tab navigator는 sceneContainerStyle과 관련된 prop를 가지고 있음
-        //sceneContainerStyle = 각 화면에 대한 스타일
-        <Tab.Navigator 
-            sceneContainerStyle={{
-                backgroundcolor: isDark ? BLACK_COLOR : "white"
-            }}
-            screenOptions={{
-                //unmountOnBlur : //해당 컴포넌트(화면)를 떠나면 메모리에서 컴포넌트를 삭제
-                unmountOnBlur: true,  
-                headerTitleAlign: "center",
-                tabBarStyle: {backgroundColor: isDark ? BLACK_COLOR : "white"},
-                tabBarActiveTintColor: isDark ? YELLOW_COLOR : BLACK_COLOR,
-                tabBarInactiveTintColor: isDark ? DARK_GREY : LIGHT_GREY,
-                headerStyle: {
-                    backgroundColor: isDark ? BLACK_COLOR : "white",
-                },
-                headerTitleStyle: {
-                    color: isDark ? "white" : BLACK_COLOR,
-                },
-                tabBarLabelStyle : {
-                    marginTop: -5,
-                    fontSize: 14,
-                    fontWeight: "400"
-                }
-            }}>
-            <Tab.Screen name="Movies" component={Movies} options={{
-                tabBarIcon: ({focused, color, size}) => {
-                    return (<Ionicons name={focused ? "film" : "film-outline"} size={size} color={color} />);
-                }
-            }}/>
-            <Tab.Screen name="TV" component={Tv} options={{
-                tabBarIcon: ({focused, color, size}) => {
-                    return (<Ionicons name={focused ? "tv" : "tv-outline"} size={size} color={color} />);
-                }
-            }}/>
-            <Tab.Screen name="Search" component={Search} options={{
-                tabBarIcon: ({focused, color, size}) => {
-                    return (<Ionicons name={focused ? "search" : "search-outline"} size={size} color={color} />);
-                }
-            }}/>
-        </Tab.Navigator>
-    )
+  const isDark = useColorScheme();
+  return (
+    //tab navigator는 sceneContainerStyle과 관련된 prop를 가지고 있음
+    //sceneContainerStyle = 각 화면에 대한 스타일
+    <Tab.Navigator
+      sceneContainerStyle={{
+        backgroundcolor: isDark ? BLACK_COLOR : "white",
+      }}
+      screenOptions={{
+        //unmountOnBlur : //해당 컴포넌트(화면)를 떠나면 메모리에서 컴포넌트를 삭제
+        unmountOnBlur: true,
+        headerTitleAlign: "center",
+        tabBarStyle: { backgroundColor: isDark ? BLACK_COLOR : "white" },
+        tabBarActiveTintColor: isDark ? YELLOW_COLOR : BLACK_COLOR,
+        tabBarInactiveTintColor: isDark ? DARK_GREY : LIGHT_GREY,
+        headerStyle: {
+          backgroundColor: isDark ? BLACK_COLOR : "white",
+        },
+        headerTitleStyle: {
+          color: isDark ? "white" : BLACK_COLOR,
+        },
+        tabBarLabelStyle: {
+          marginTop: -5,
+          fontSize: 14,
+          fontWeight: "400",
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Movies"
+        component={Movies}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            return (
+              <Ionicons
+                name={focused ? "film" : "film-outline"}
+                size={size}
+                color={color}
+              />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name="TV"
+        component={Tv}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            return (
+              <Ionicons
+                name={focused ? "tv" : "tv-outline"}
+                size={size}
+                color={color}
+              />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={Search}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            return (
+              <Ionicons
+                name={focused ? "search" : "search-outline"}
+                size={size}
+                color={color}
+              />
+            );
+          },
+        }}
+      />
+    </Tab.Navigator>
+  );
 };
 
 export default Tabs;

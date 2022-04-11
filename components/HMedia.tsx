@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import Poster from "./Poster";
 import Votes from "./Votes";
 
-const Title = styled.Text<{ isDark: boolean}>`
+const Title = styled.Text<{ isDark: boolean }>`
   color: ${(props) => (props.isDark ? "white" : props.theme.textColor)};
   font-weight: 600;
   font-size: 13px;
@@ -20,62 +20,63 @@ const HorizontalColumn = styled.View`
   width: 80%;
 `;
 
-const Overview = styled.Text<{ isDark : boolean}>`
-  color: ${(props) => props.isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"};
+const Overview = styled.Text<{ isDark: boolean }>`
+  color: ${(props) =>
+    props.isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"};
   width: 80%;
-
 `;
 
-const Release = styled.Text<{ isDark : boolean}>`
-  color: ${(props) => props.isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"};
+const Release = styled.Text<{ isDark: boolean }>`
+  color: ${(props) =>
+    props.isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"};
   font-size: 12px;
   margin-vertical: 5px;
 `;
 
 interface HMediaProps {
-    posterPath: string;
-    originalTitle: string;
-    overview: string;
-    releaseDate?: string;
-    voteAverage?: number;
-  }
+  posterPath: string;
+  originalTitle: string;
+  overview: string;
+  releaseDate?: string;
+  voteAverage?: number;
+}
 
 const HMedia: React.FC<HMediaProps> = ({
-    posterPath,
-    originalTitle,
-    overview,
-    releaseDate,
-    voteAverage,
+  posterPath,
+  originalTitle,
+  overview,
+  releaseDate,
+  voteAverage,
 }) => {
   const isDark = useColorScheme() === "dark";
 
-    return (
-        <HorizontalMovie>
-            <Poster path={posterPath} />
-            <HorizontalColumn>
-                <Title isDark={isDark}>
-                    {originalTitle.length > 30
-                    ? `${originalTitle.slice(0, 30)}...`
-                    : originalTitle}
-                </Title>
-                {releaseDate ? (
-                    <Release isDark={isDark}>
-                    {new Date(releaseDate).toLocaleDateString("ko", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                    })}
-                    </Release>
-                ) : null}
-                {voteAverage ? <Votes votes={voteAverage} /> : null}
-                <Overview isDark={isDark}>
-                    {overview !== "" && overview.length > 140
-                    ? `${overview.slice(0, 140)}...`
-                    : overview}
-                </Overview>
-            </HorizontalColumn>
-        </HorizontalMovie>
-    );
+  return (
+    <HorizontalMovie>
+      <Poster path={posterPath} />
+      <HorizontalColumn>
+        <Title isDark={isDark}>
+          {originalTitle.length > 30
+            ? `${originalTitle.slice(0, 30)}...`
+            : originalTitle}
+        </Title>
+        {releaseDate ? (
+          <Release isDark={isDark}>
+            {new Date(releaseDate).toLocaleDateString("ko", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </Release>
+        ) : null}
+        {voteAverage ? <Votes votes={voteAverage} /> : null}
+        <Overview isDark={isDark}>
+          {overview !== "" && overview.length > 140
+            ? `${overview.slice(0, 140)}...`
+            : overview}
+        </Overview>
+      </HorizontalColumn>
+    </HorizontalMovie>
+  );
 };
 
 export default HMedia;
