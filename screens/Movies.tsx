@@ -6,7 +6,7 @@ import { View, Text, FlatList,
   // swiper참고문서 
 //https://github.com/reactrondev/react-native-web-swiper
 import Swiper from 'react-native-swiper';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { moviesApi } from '../api';
 // 2.13강의 오류대처 timer Warining
 import { LogBox } from 'react-native';
@@ -57,25 +57,33 @@ const {height : SCREEN_HEIGHT} = Dimensions.get("window");
 
 //??
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {  
+  const queryClient = useQueryClient(); //query, caching memory 접근가능
+  
   const isDark = useColorScheme() === "dark";
-  const [refreshing, setRefreshing] = useState(false);  // 새로고침
 
   /* ReactQuery를 사용해서 fetch하면 캐싱메모리에 저장하기 때문에 다시 fetch를 하지 않음
      즉 다시 데이터를 로드 하지 않아도 됨
      API사용료를 내고 있다면 이득
   */
-  const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery(
-    "nowPlaying",     //캐시에 이 이름으로 저장됨
+  const { 
+    isLoading: nowPlayingLoading,       //로딩 상태
+    data: nowPlayingData,               //데이터
+    // refetch: refetchNowPlaying,  //데이터 새로 부르기
+    isRefetching: isRefetchingNowPlaying  // refetch값(boolean)
+  } = useQuery(
+    ["movies", "nowPlaying"],     //캐시에 이 key로 저장됨(query key)
     moviesApi.nowPlaying  
   );
-  const { isLoading: upcomingLoading, data: upcomingData } = useQuery("upcoming", moviesApi.upcoming);
-  const { isLoading: trendingLoading, data: trendingData } = useQuery("trending", moviesApi.trending);
+  const { isLoading: upcomingLoading, data: upcomingData, isRefetching: isRefetchingUpcoming } = useQuery(["movies", "upcoming"], moviesApi.upcoming);
+  const { isLoading: trendingLoading, data: trendingData, isRefetching: isRefetchingTrending } = useQuery(["movies", "trending"], moviesApi.trending);
 
 
   useEffect(()=> {
   }, []);
 
   const onRefresh = async () => {
+    //caching을 관리하는 QueryClient로 movies Query들을 다시 불러옴
+    queryClient.refetchQueries(["movies"]);
   }
 
   const renderVMedia = ({ item }) => (
@@ -104,7 +112,10 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
 
   const MovieKeyExtractor = (item) => item.id + "";
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
-
+  const refreshing = isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending
+  console.log(refreshing);
+  
+  
   return loading ? (
     <Loader>
       <ActivityIndicator color="black" size="small" />
