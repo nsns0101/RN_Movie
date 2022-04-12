@@ -2,13 +2,10 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
-  View,
-  Text,
   FlatList,
   ActivityIndicator,
   Dimensions,
   useColorScheme,
-  RefreshControl,
 } from "react-native";
 // swiper참고문서
 //https://github.com/reactrondev/react-native-web-swiper
@@ -23,10 +20,7 @@ import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
 import Loader from "../components/Loader";
-
-// const Container = styled.ScrollView`
-
-// `;
+import HList from "../components/HList";
 
 const ListTitle = styled.Text<{ isDark: boolean }>`
   color: ${(props) =>
@@ -132,26 +126,9 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
               />
             ))}
           </Swiper>
-          <ListContainer>
-            <ListTitle isDark={isDark}>Trending Movies</ListTitle>
-            {trendingData ? (
-              <FlatList
-                data={trendingData.results}
-                horizontal
-                keyExtractor={(item) => item.id + ""}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingHorizontal: 30 }}
-                ItemSeparatorComponent={VSeparator}
-                renderItem={({ item }) => (
-                  <VMedia
-                    posterPath={item.poster_path || ""}
-                    originalTitle={item.original_title}
-                    voteAverage={item.vote_average}
-                  />
-                )}
-              />
-            ) : null}
-          </ListContainer>
+          {trendingData ? (
+            <HList title="Trending Movies" data={trendingData.results} />
+          ) : null}
           <ComingSoonTitle isDark={isDark}>Coming soon</ComingSoonTitle>
         </>
       }
