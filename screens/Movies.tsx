@@ -49,6 +49,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
 
   const isDark = useColorScheme() === "dark";
 
+  const [refreshing, setRefreshing] = useState(false);
   /* ReactQuery를 사용해서 fetch하면 캐싱메모리에 저장하기 때문에 다시 fetch를 하지 않음
      즉 다시 데이터를 로드 하지 않아도 됨
      API사용료를 내고 있다면 이득
@@ -57,27 +58,20 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     isLoading: nowPlayingLoading, //로딩 상태
     data: nowPlayingData, //데이터
     // refetch: refetchNowPlaying,  //데이터 새로 부르기
-    isRefetching: isRefetchingNowPlaying, // refetch값(boolean)
   } = useQuery<MovieResponse>(
     ["movies", "nowPlaying"], //캐시에 이 key로 저장됨(query key)
     moviesApi.nowPlaying
   );
-  const {
-    isLoading: upcomingLoading,
-    data: upcomingData,
-    isRefetching: isRefetchingUpcoming,
-  } = useQuery<MovieResponse>(["movies", "upcoming"], moviesApi.upcoming);
-  const {
-    isLoading: trendingLoading,
-    data: trendingData,
-    isRefetching: isRefetchingTrending,
-  } = useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
 
-  useEffect(() => {}, []);
+  const { isLoading: upcomingLoading, data: upcomingData } =
+    useQuery<MovieResponse>(["movies", "upcoming"], moviesApi.upcoming);
+  const { isLoading: trendingLoading, data: trendingData } =
+    useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
 
   const onRefresh = async () => {
-    //caching을 관리하는 QueryClient로 movies Query들을 다시 불러옴
-    queryClient.refetchQueries(["movies"]);
+    setRefreshing(true);
+    await queryClient.refetchQueries(["movies"]);
+    setRefreshing(false);
   };
 
   const VSeparator = styled.View`
@@ -89,9 +83,6 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
 
   // const MovieKeyExtractor = ;
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
-  const refreshing =
-    isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending;
-  console.log(refreshing);
 
   return loading ? (
     <Loader />
