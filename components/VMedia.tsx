@@ -1,5 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { useColorScheme } from "react-native";
+import { TouchableOpacity, useColorScheme } from "react-native";
 import styled from "styled-components/native";
 import Poster from "./Poster";
 import Votes from "./Votes";
@@ -27,16 +28,23 @@ const VMedia: React.FC<VMediaProps> = ({
   voteAverage,
 }) => {
   const isDark = useColorScheme() === "dark";
+  const navigation = useNavigation();
 
+  const goToDetail = () => {
+    navigation.navigate("Stack", { screen: "Detail" });
+  };
   return (
-    <VerticalMovie>
-      <Poster path={posterPath} />
-      <Title isDark={isDark}>
-        {originalTitle.slice(0, 12)}
-        {originalTitle.length > 12 ? "..." : null}
-      </Title>
-      <Votes votes={voteAverage} />
-    </VerticalMovie>
+    //터치하면 Opacity값 변경후 돌아옴(깜빡임)
+    <TouchableOpacity onPress={goToDetail}>
+      <VerticalMovie>
+        <Poster path={posterPath} />
+        <Title isDark={isDark}>
+          {originalTitle.slice(0, 12)}
+          {originalTitle.length > 12 ? "..." : null}
+        </Title>
+        <Votes votes={voteAverage} />
+      </VerticalMovie>
+    </TouchableOpacity>
   );
 };
 

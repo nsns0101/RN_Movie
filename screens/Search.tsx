@@ -3,6 +3,8 @@ import { Alert, useColorScheme } from "react-native";
 import styled from "styled-components/native";
 import { moviesApi, tvApi } from "../api";
 import { useQuery } from "react-query";
+import Loader from "../components/Loader";
+import HList from "../components/HList";
 
 const Container = styled.ScrollView``;
 
@@ -62,6 +64,12 @@ const Search = () => {
         //텍스트 입력의 제출 버튼을 눌렀을때 호출되는 콜백(== onSubmit?)
         onSubmitEditing={onSubmit}
       />
+      {/* 로딩 안되어 있으면 로딩기호 보여주기 */}
+      {moviesLoading || tvLoading ? <Loader /> : null}
+      {moviesData ? (
+        <HList title="Movie Results" data={moviesData.results} />
+      ) : null}
+      {tvData ? <HList title="TV Results" data={tvData.results} /> : null}
     </Container>
   );
 };

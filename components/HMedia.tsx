@@ -1,5 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { useColorScheme } from "react-native";
+import { TouchableOpacity, useColorScheme } from "react-native";
 import styled from "styled-components/native";
 import Poster from "./Poster";
 import Votes from "./Votes";
@@ -49,33 +50,39 @@ const HMedia: React.FC<HMediaProps> = ({
   voteAverage,
 }) => {
   const isDark = useColorScheme() === "dark";
+  const navigation = useNavigation();
 
+  const goToDetail = () => {
+    navigation.navigate("Stack", { screen: "Detail" });
+  };
   return (
-    <HorizontalMovie>
-      <Poster path={posterPath} />
-      <HorizontalColumn>
-        <Title isDark={isDark}>
-          {originalTitle.length > 30
-            ? `${originalTitle.slice(0, 30)}...`
-            : originalTitle}
-        </Title>
-        {releaseDate ? (
-          <Release isDark={isDark}>
-            {new Date(releaseDate).toLocaleDateString("ko", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </Release>
-        ) : null}
-        {voteAverage ? <Votes votes={voteAverage} /> : null}
-        <Overview isDark={isDark}>
-          {overview !== "" && overview.length > 140
-            ? `${overview.slice(0, 140)}...`
-            : overview}
-        </Overview>
-      </HorizontalColumn>
-    </HorizontalMovie>
+    <TouchableOpacity onPress={goToDetail}>
+      <HorizontalMovie>
+        <Poster path={posterPath} />
+        <HorizontalColumn>
+          <Title isDark={isDark}>
+            {originalTitle.length > 30
+              ? `${originalTitle.slice(0, 30)}...`
+              : originalTitle}
+          </Title>
+          {releaseDate ? (
+            <Release isDark={isDark}>
+              {new Date(releaseDate).toLocaleDateString("ko", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </Release>
+          ) : null}
+          {voteAverage ? <Votes votes={voteAverage} /> : null}
+          <Overview isDark={isDark}>
+            {overview !== "" && overview.length > 140
+              ? `${overview.slice(0, 140)}...`
+              : overview}
+          </Overview>
+        </HorizontalColumn>
+      </HorizontalMovie>
+    </TouchableOpacity>
   );
 };
 
