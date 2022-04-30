@@ -31,7 +31,10 @@ const VMedia: React.FC<VMediaProps> = ({
   const navigation = useNavigation();
 
   const goToDetail = () => {
-    navigation.navigate("Stack", { screen: "Detail" });
+    navigation.navigate("Stack", {
+      screen: "Detail",
+      params: { originalTitle },
+    });
   };
   return (
     //터치하면 Opacity값 변경후 돌아옴(깜빡임)
